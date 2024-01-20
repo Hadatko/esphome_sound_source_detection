@@ -23,15 +23,9 @@ Source code for sound analyzes are based on this article: [Smart door bell and n
 Intention was be able to detect door bell sound and push notification into Home assistant, which can do whatever user want. E.g. Send notification to the mobile phone
 
 In the video first time it didn't work as i set bell value to 183 and it measured 182. So i need decrease the value i am looking for, or have range.
-
-<div style="display:flex; justify-content: space-between; align-items: center;"    >
-<video width="400" controls>
-  <source src="media/demo.mp4" type="video/mp4" />
-  Your browser does not support HTML video.
-</video>
+[Press click to see video](https://youtube.com/shorts/suezESDH6sY?feature=share)
 
 <img src="media/notification.jpg" width="400" />
-</div>
 
 ## Dependency
 
