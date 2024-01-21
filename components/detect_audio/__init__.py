@@ -25,15 +25,26 @@ DetectAudioComponent = detect_audio_ns.class_("DetectAudio", cg.Component)
 CONF_I2S_ID = "i2s_id"
 
 CONF_DETECT_AUDIO_ID = "detect_audio_id"
+CONF_SOUND_SOURCES = "sound_sources"
 
-CONFIG_SCHEMA =   cv.Schema( {
-        cv.GenerateID(): cv.declare_id(DetectAudioComponent),
-        cv.GenerateID(CONF_I2S_ID): cv.use_id(microphone.I2SAudioMicrophone)})
+SOUND_SOURCES_SCHEMA = cv.Schema({
+
+})
+
+CONFIG_SCHEMA = cv.Schema({
+    cv.GenerateID(): cv.declare_id(DetectAudioComponent),
+    cv.GenerateID(CONF_I2S_ID): cv.use_id(microphone.I2SAudioMicrophone),
+    cv.Optional(CONF_SOUND_SOURCES): cv.ensure_list(cv.All({cv.Required("name"): cv.string, cv.Required("level"): cv.int_, })),
+})
+
 
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     i2s_component = await cg.get_variable(config[CONF_I2S_ID])
     cg.add(var.set_i2s(i2s_component))
+    sound_sources = config[CONF_SOUND_SOURCES]
+    for soundSource in sound_sources:
+        cg.add(var.addSoundSource(soundSource["name"], soundSource["level"]))
     await cg.register_component(var, config)
 
     # await microphone.register_microphone(var, config)

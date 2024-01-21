@@ -107,73 +107,19 @@ switch:
     lambda: return id(external_mic).is_running();
 
 button:
-  - platform: template
-    name: Clear metrics
-    id: clear_metrics
-    on_press:
-      - lambda: id(detect_audio_id).clearMetrics();
 
 sensor:
-  - platform: template
-    lambda: |-
-      return id(detect_audio_id).getCurrentPeak();
-    name: "Current peak value"
-    update_interval: 500ms
-  - platform: template
-    lambda: |-
-      return id(detect_audio_id).getCurrentLoudness();
-    name: "Current loudness value"
-    update_interval: 500ms
-  - platform: template
-    lambda: |-
-      return id(detect_audio_id).getLoudnessSum();
-    name: "Total loudness"
-    update_interval: 500ms
-  - platform: template
-    lambda: |-
-      return id(detect_audio_id).getLoudnessMax();
-    name: "Max loudness"
-    update_interval: 500ms
-  - platform: template
-    lambda: |-
-      return id(detect_audio_id).getLoudnessMin();
-    name: "Min loudness"
-    update_interval: 500ms
 
-# dummy binary sensor as i have Template binary sensor include in src
 binary_sensor:
-  - platform: template
-    id: "bell"
-    lambda: |-
-      return id(bell).state;
-    name: "Bell1"
-    publish_initial_state: true
 ```
 
-* Second approach is to defined sensor directly in yaml file. In this case extend previous yaml with:
+* Second approach is to defined sensor directly in yaml file. In this case extend previous yaml ( detect_audio) with configuration array placed in sound_sources:
 
 ```yaml
-esphome: #add bellow lines under this section
-  on_boot:
-    then:
-      lambda: id(detect_audio_id).addSoundSource(id(bell1), 182); #first custom sensor. Parameters (binary_sensor bell1, trigger peak value)
-              id(detect_audio_id).addSoundSource(id(bell2), 45); #second custom sensor. Parameters (binary_sensor bell2, trigger peak value)
-              # add more here and meet definition in binary_sensor bellow
-
-binary_sensor: #you can remove temp binary sensor from above and add your custom sensors here
-  - platform: template  #first custom sensor
-    id: "bell1"
-    lambda: |-
-      return id(bell1).state;
-    name: "Bell1"
-    publish_initial_state: true
-  - platform: template #second custom sensor
-    id: "bell2"
-    lambda: |-
-      return id(bell2).state;
-    name: "Bell2"
-    publish_initial_state: true
-  # add more here and meet calls in esphome/on_boot configuration above
+detect_audio: # this component analyzes the input from mic, and its source code is the main part of this PR
+  id: "detect_audio_id"
+  sound_sources: [{"name":"bel1","level": 45},
+                  {"name":"bel2","level": 182}] # add as many as wanted
 ```
 
 `I think this solution has its cavities, which are caused as mentioned lack of knowledge of this SDK. So maybe somebody come up with better solution.`
